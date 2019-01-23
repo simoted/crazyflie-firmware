@@ -58,7 +58,7 @@ void sitAwUpdateSetpoint(setpoint_t *setpoint, const sensorData_t *sensorData,
 
 /* Configuration options for the 'Tumbled' detection. */
 #define SITAW_TU_THRESHOLD 60      /* The minimum roll angle indicating a Tumbled situation. */
-#define SITAW_TU_TRIGGER_COUNT 15  /* The number of consecutive tests for Tumbled to be detected. Configured for 250Hz testing. */
+#define SITAW_TU_TRIGGER_COUNT 1500  /* The number of consecutive tests for Tumbled to be detected. Configured for 250Hz testing. */
 
 /* LOG configurations. Enable these to be able to log detection in the cfclient. */
 #define SITAW_LOG_ENABLED            /* Uncomment to enable LOG framework. */
