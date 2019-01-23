@@ -71,6 +71,7 @@ enum packet_type {
   hoverType         = 5,
   fullStateType     = 6,
   positionType      = 7,
+  angularVelocityType = 8,
 };
 
 /* ---===== 2 - Decoding functions =====--- */
@@ -367,6 +368,29 @@ static void positionDecoder(setpoint_t *setpoint, uint8_t type, const void *data
   setpoint->attitude.yaw = values->yaw;
 }
 
+struct angularVelocityPacket_s {
+	float rateRoll;
+	float ratePitch;
+	float rateYaw;
+	uint16_t thrust;
+} __attribute__((packed));
+static void angularVelocityDecoder(setpoint_t *setpoint, uint8_t type, const void *data, size_t datalen)
+{
+	const struct angularVelocityPacket_s *values = data;
+
+	ASSERT(datalen == sizeof(struct angularVelocityPacket_s));
+
+	setpoint->mode.roll = modeVelocity;
+	setpoint->mode.pitch = modeVelocity;
+	setpoint->mode.yaw = modeVelocity;
+
+	float const millirad2deg = 180.0f / ((float)M_PI * 1000.0f);
+	setpoint->attitudeRate.roll = millirad2deg * values->rateRoll;
+	setpoint->attitudeRate.pitch = millirad2deg * values->ratePitch;
+	setpoint->attitudeRate.yaw = millirad2deg * values->rateYaw;
+
+	setpoint->thrust = values->thrust;
+}
  /* ---===== 3 - packetDecoders array =====--- */
 const static packetDecoder_t packetDecoders[] = {
   [stopType]          = stopDecoder,
@@ -377,6 +401,7 @@ const static packetDecoder_t packetDecoders[] = {
   [hoverType]         = hoverDecoder,
   [fullStateType]     = fullStateDecoder,
   [positionType]      = positionDecoder,
+  [angularVelocityType] = angularVelocityDecoder,
 };
 
 /* Decoder switch */
